@@ -8,12 +8,21 @@ Moved the traderFrame.form to /share/PetrasyBackup, nice for design but gets in 
  */
 package ptscharts;
 
+import com.ib.client.Contract;
+import ptsutils.PtsSymbolInfo;
+import ptsutils.PtsPaperTrade;
+import ptsutils.PtsOrder;
+import ptsutils.PtsDBops;
 import java.awt.Dimension;
 import java.sql.Timestamp;
 import java.util.Date;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.apache.commons.math.util.MathUtils;
+import ptstrader.PtsTrader;
+import ptsutils.BuySell;
+import ptsutils.PtsContractFactory;
 
 /**
  *
@@ -42,6 +51,7 @@ public class PtsTraderFrame extends javax.swing.JFrame {
   //JComboBox orderTypeCombo = new JComboBox(orderTypeString);
   String[] TIFString = {"DAY", "GTC"};
   //JComboBox TIFCombo = new JComboBox(orderTypeString);
+  PtsTrader trader = null;
 
   public PtsTraderFrame() {
     //dtml = initDtm1();
@@ -90,6 +100,7 @@ public class PtsTraderFrame extends javax.swing.JFrame {
     madeTradesButton = new javax.swing.JButton();
     currentPortfolioButton = new javax.swing.JButton();
     linesToChartButton = new javax.swing.JButton();
+    ExecuteTradeButton = new javax.swing.JButton();
     parentOrderScrollPane1 = new javax.swing.JScrollPane();
     ParentTradeTable = new PtsOrderTable1Row();
     stopLossOrderScrollPane2 = new javax.swing.JScrollPane();
@@ -107,6 +118,7 @@ public class PtsTraderFrame extends javax.swing.JFrame {
     paperTradeButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
     paperTradeButton.setText("Execute Paper Trade");
     paperTradeButton.addActionListener(new java.awt.event.ActionListener() {
+
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         paperTradeButtonActionPerformed(evt);
       }
@@ -120,6 +132,7 @@ public class PtsTraderFrame extends javax.swing.JFrame {
     madeTradesButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
     madeTradesButton.setText("Made Trades");
     madeTradesButton.addActionListener(new java.awt.event.ActionListener() {
+
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         madeTradesButtonActionPerformed(evt);
       }
@@ -144,6 +157,16 @@ public class PtsTraderFrame extends javax.swing.JFrame {
       }
     });
     buttonPanel.add(linesToChartButton);
+
+    ExecuteTradeButton.setFont(new java.awt.Font("DejaVu Sans", 1, 14));
+    ExecuteTradeButton.setText("Execute - Trade");
+    ExecuteTradeButton.addActionListener(new java.awt.event.ActionListener() {
+
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ExecuteTradeButtonActionPerformed(evt);
+      }
+    });
+    buttonPanel.add(ExecuteTradeButton);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -206,7 +229,56 @@ public class PtsTraderFrame extends javax.swing.JFrame {
     pack();
   }
 
-  private void currentPortfolioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentPortfolioButtonActionPerformed
+  private void ExecuteTradeButtonActionPerformedTest(java.awt.event.ActionEvent evt) {
+    if (trader == null) {
+      trader = new PtsTrader(7510);
+    }
+    for (int i = 0; i < 3; i++) {
+      Contract contract = PtsContractFactory.makeContract("AUD", "FUT", "GLOBEX", "201106", "USD");
+      trader.PlaceBracketOrder(contract, BuySell.BUY, 1, 1.00, 0.98, 1.23);
+    }
+    //trader.closeConnection();
+  }
+
+  private void ExecuteTradeButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    //PtsBracketOrder ord = new PtsBracketOrder();
+    if (trader == null) {
+      trader = new PtsTrader(7510);
+    }
+    Contract contract = PtsContractFactory.makeContract(symbolInfo.getSymbol(), "FUT", symbolInfo.getExchange(),
+            Integer.toString(symbolInfo.getMaxActiveExpiry()), "USD");
+
+    String buyOrSell = (String) ParentTradeTable.getValueAt(0, 0);
+    BuySell buysell;
+    if (buyOrSell.compareTo("BuyToOpen") == 0) {
+      buysell = BuySell.BUY;
+    } else {
+      buysell = BuySell.SELL;
+    }
+
+    PtsOrder order = ((PtsOrderTable1Row) ParentTradeTable).getOrder();
+    Double tradePrice = order.getPrice();
+    order = ((PtsOrderTable1Row) StopLossTable).getOrder();
+    Double stopLossPrice = order.getPrice();
+    order = ((PtsOrderTable1Row) ProfitStopTable).getOrder();
+    Double profitStopPrice = order.getPrice();
+//    profitStopPrice = MathUtils.round(profitStopPrice, 4);
+    double mintick = chart.getFrame().getSymbolInfo().getMintick();
+    tradePrice = mintickSetup(tradePrice, mintick);
+    stopLossPrice = mintickSetup(stopLossPrice, mintick);
+    profitStopPrice = mintickSetup(profitStopPrice, mintick);
+    trader.PlaceBracketOrder(contract, buysell, 1, tradePrice, stopLossPrice, profitStopPrice);
+    setLocationToBottom();
+    int j = 3;
+  }
+
+  public double mintickSetup(double val, double mintick) {
+    double qr = val / mintick;
+    double qrFrac = qr % 1;
+    double qrWhole = qr - qrFrac;
+    return qrWhole * mintick;  //BINGO!
+  }
+  private void currentPortfolioButtonActionPerformed(java.awt.event.ActionEvent evt) {
 //    if (!portfolioUpdate) {
 //      currentPortfolioButton.setText(portfolioUpdateActive);
 //    }
@@ -338,20 +410,16 @@ public class PtsTraderFrame extends javax.swing.JFrame {
     }
     PtsOrder stopLossOrder = new PtsOrder();
     stopLossOrder.setUl(symbolInfo.getSymbol());
-    //stopLossOrder.setExpiry(symbolInfo.getMaxActiveExpiry());
-    if (parentOrder.getOrderType().equals("BuyToOpen")) {
-      stopLossOrder.setOrderType("SellLossToClose");
-    } else if (parentOrder.getOrderType().equals("SellToOpen")) {
-      stopLossOrder.setOrderType("BuyLossToClose");
-    }
-    stopLossOrder.setPrice(symbolInfo.getActualPriceFromExpandedPrice(expandedPrice));
-    //stopLossOrder.setOrderType("STP");
-    //stopLossOrder.setTif("GTC");
     stopLossOrder.setTranslatedPrice(expandedPrice);
     stopLossOrder.setBarTime(parentOrder.getBarTime());
-    stopLossOrder.setLossOrGain(-1 *Math.abs(parentOrder.getTranslatedPrice() - stopLossOrder.getTranslatedPrice()));
-    //stopLossOrder.setLossOrGain(expandedStopLossPrice - expandedPrice);
-    //stopLossOrder.setStatus("Submitted");
+    if (parentOrder.getOrderType().equals("BuyToOpen")) {
+      stopLossOrder.setOrderType("SellLossToClose");
+      stopLossOrder.setLossOrGain(stopLossOrder.getTranslatedPrice() - parentOrder.getTranslatedPrice());
+    } else if (parentOrder.getOrderType().equals("SellToOpen")) {
+      stopLossOrder.setOrderType("BuyLossToClose");
+      stopLossOrder.setLossOrGain(parentOrder.getTranslatedPrice() - stopLossOrder.getTranslatedPrice());
+    }
+    stopLossOrder.setPrice(symbolInfo.getActualPriceFromExpandedPrice(expandedPrice));
     ((PtsOrderTable1Row) StopLossTable).setOrder(stopLossOrder);
     return true;
   }

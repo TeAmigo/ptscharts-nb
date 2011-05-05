@@ -4,13 +4,11 @@
  */
 package ptscharts;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -173,17 +171,20 @@ public class PtsDateOps {
   }
 
   public static void main(String[] args) {
-    Calendar c1 = Calendar.getInstance(), c2 = Calendar.getInstance();
-    c1.setTime(new Date());
-    c2.setTime(new Date());
-    c2.add(Calendar.MONTH, 1);
-    c2.add(Calendar.HOUR, 3);
-    c2.add(Calendar.MINUTE, 10);
-    PtsDateOps.elapsedTimeString(c1.getTimeInMillis(), c2.getTimeInMillis());
-    System.out.println(PtsDateOps.elapsedTimeString(c1.getTimeInMillis(), c2.getTimeInMillis()));
-    if (c1.after(c2)) {
-      int i = 1;
-    }
-    int j = 2;
+    DateTime d1 = new DateTime();
+    d1.plusDays(1);
+
+//    Calendar c1 = Calendar.getInstance(), c2 = Calendar.getInstance();
+//    c1.setTime(new Date());
+//    c2.setTime(new Date());
+//    c2.add(Calendar.MONTH, 1);
+//    c2.add(Calendar.HOUR, 3);
+//    c2.add(Calendar.MINUTE, 10);
+//    PtsDateOps.elapsedTimeString(c1.getTimeInMillis(), c2.getTimeInMillis());
+//    System.out.println(PtsDateOps.elapsedTimeString(c1.getTimeInMillis(), c2.getTimeInMillis()));
+//    if (c1.after(c2)) {
+//      int i = 1;
+//    }
+//    int j = 2;
   }
 }

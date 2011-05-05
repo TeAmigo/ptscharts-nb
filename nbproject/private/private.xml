@@ -3,16 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
         <file>
             <url>src/ptscharts/indicators/ChartIndicator.java</url>
-            <line>56</line>
-            <line>105</line>
-            <line>146</line>
-            <line>232</line>
+            <line>58</line>
+            <line>107</line>
+            <line>148</line>
+            <line>244</line>
+        </file>
+        <file>
+            <url>src/ptscharts/PtsTraderFrame.java</url>
+            <line>242</line>
+            <line>462</line>
         </file>
         <file>
             <url>src/ptscharts/PtsChart.java</url>
-            <line>210</line>
-            <line>332</line>
-            <line>422</line>
+            <line>300</line>
+            <line>313</line>
+            <line>314</line>
+            <line>338</line>
+            <line>428</line>
         </file>
     </editor-bookmarks>
 </project-private>

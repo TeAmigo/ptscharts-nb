@@ -4,6 +4,8 @@
  */
 package ptscharts;
 
+import ptsutils.PtsSymbolInfo;
+import ptsutils.PtsDBops;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,6 +64,7 @@ public class PtsSymbolInfos {
         si.exchange = res.getString("exchange");
         si.multiplier = res.getInt("multiplier");
         si.priceMagnifier = res.getInt("priceMagnifier");
+        si.mintick = res.getDouble("mintick");
         si.fullName = res.getString("fullName");
         si.minDate = new DateTime(res.getDate("mindate"));
         si.maxDate = new DateTime(res.getDate("maxdate"));

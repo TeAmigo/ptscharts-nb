@@ -10,6 +10,7 @@
  ********************************************************************/
 package ptscharts;
 
+import ptsutils.PtsOrder;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;

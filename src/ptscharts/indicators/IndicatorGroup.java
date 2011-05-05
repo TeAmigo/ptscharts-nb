@@ -5,6 +5,7 @@
  */
 package ptscharts.indicators;
 
+import ptsutils.OHLCVData;
 import java.util.ArrayList;
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.data.time.RegularTimePeriod;

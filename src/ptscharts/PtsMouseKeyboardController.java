@@ -240,6 +240,12 @@ public class PtsMouseKeyboardController {
         moveChartHigher();
       }
       //System.out.println("Key Typed: " + e.getKeyChar());
+    } else if(e.isControlDown()) {
+      if (keys[KeyEvent.VK_J]) {
+        //Jump, meaning load new data after resetting endDate so that it corresponds to actual last bar in chart
+        chart.resetEndDate();
+        chart.jump();
+      }
     }
   }
 
@@ -301,7 +307,8 @@ public class PtsMouseKeyboardController {
       if (keys[KeyEvent.VK_A]) {  // Increase the relative size of subplot.
         plotWeight = plot.getWeight();
         plot.setWeight(plotWeight + 1);
-      } else if (keys[KeyEvent.VK_R] || keys[KeyEvent.VK_X]) { // Remove this subplot.
+      } 
+        else if (keys[KeyEvent.VK_R] || keys[KeyEvent.VK_X]) { // Remove this subplot.
         combinedPlot.remove(plot);
       } else if (keys[KeyEvent.VK_H]) {
         panel.setupHorizontalCrosshair(subChartY);

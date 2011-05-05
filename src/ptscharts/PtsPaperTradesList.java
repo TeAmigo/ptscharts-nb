@@ -5,6 +5,8 @@ package ptscharts;
  *http://download.oracle.com/javase/tutorial/uiswing/examples/components/TableDemoProject/src/components/TableDemo.java
  * as template, more or less
  */
+import ptsutils.PtsPaperTrade;
+import ptsutils.PtsDBops;
 import java.awt.Component;
 import java.awt.Frame;
 import javax.swing.JFrame;

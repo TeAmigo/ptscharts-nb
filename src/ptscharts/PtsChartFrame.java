@@ -4,6 +4,7 @@
  */
 package ptscharts;
 
+import ptsutils.PtsSymbolInfo;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import javax.swing.JFrame;
@@ -22,6 +23,7 @@ public class PtsChartFrame extends JFrame {
   PtsChart chart;
   PtsChartPanel chartPanel;
   JPanel topPanel;
+  PtsSymbolInfo symbolInfo;
   //private Crosshair crosshair1;
   //private Crosshair crosshair2;
   java.awt.Toolkit toolkit = this.getToolkit();
@@ -31,7 +33,9 @@ public class PtsChartFrame extends JFrame {
     return chart;
   }
 
-  
+  public PtsSymbolInfo getSymbolInfo() {
+    return symbolInfo;
+  }
 
   public PtsChartFrame(PtsSymbolInfo symInfo, DateTime bdt, DateTime edt, int compressionFactorIn) {
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -40,6 +44,7 @@ public class PtsChartFrame extends JFrame {
 //        formWindowClosing(evt);
 //      }
 //    });
+    symbolInfo = symInfo;
     chart = new PtsChart(this, new CombinedDomainXYPlot(new DateAxis("DateTime")), symInfo, bdt, edt, compressionFactorIn);
     setupChartWindow(chart);
     setIconImage(appIcon);

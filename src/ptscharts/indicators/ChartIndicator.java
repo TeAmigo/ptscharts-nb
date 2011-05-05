@@ -23,10 +23,12 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.ui.LengthAdjustmentType;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
+import org.joda.time.DateTime;
 import ptscharts.PtsChart;
 import ptscharts.PtsChart.plotTypes;
 import ptscharts.PtsChartFactory;
 import ptscharts.PtsSymbolInfos;
+import ptsutils.PtsSymbolInfo;
 
 /**
  *
@@ -152,7 +154,6 @@ public class ChartIndicator extends Indicator {
     getMyChart().getPlot(myPlot).setRenderer(seriesCollectionIdx, renderer);
   }
 
-  
   public void setupRangeAxis(String label) {
     NumberAxis vAxis = new NumberAxis(label);
     vAxis.setAutoRangeIncludesZero(false);
@@ -163,7 +164,7 @@ public class ChartIndicator extends Indicator {
   public void addHorizontalLine(int val, Color col, String label, double stroke) {
     Marker start = new ValueMarker(val);
 
-    start.setStroke(new BasicStroke((float)stroke));
+    start.setStroke(new BasicStroke((float) stroke));
     start.setLabelOffsetType(LengthAdjustmentType.EXPAND);
     start.setPaint(col);
     start.setLabel(label);
@@ -205,6 +206,17 @@ public class ChartIndicator extends Indicator {
     PtsSymbolInfos syminfs = new PtsSymbolInfos();
     syminfs.getDistinctSymbolInfos();
     PtsChartFactory factory = new PtsChartFactory(syminfs);
+    PtsSymbolInfo sym = syminfs.getSymbolInfo("AUD");
+//    PtsChart aud = IndicatorSet1.run(factory, "AUD",
+//            new DateTime().minusDays(1).toString(), new DateTime().toString(), 1);
+    PtsChart aud = IndicatorSet1.run(factory, "AUD",
+            new DateTime().minusMonths(1).toString(), new DateTime().toString(), 60);
+  }
+
+  public static void mainold(String args[]) {
+    PtsSymbolInfos syminfs = new PtsSymbolInfos();
+    syminfs.getDistinctSymbolInfos();
+    PtsChartFactory factory = new PtsChartFactory(syminfs);
     // AUD CAD DX  ES EUR GBP JPY ZB ZF ZN
     PtsChart chartcad = factory.createPtsChart("EUR", "2011-01-15T00:00", "2011-02-05T07:00", 60);
     IndicatorGroup indGroup = new IndicatorGroup(chartcad);
@@ -230,7 +242,7 @@ public class ChartIndicator extends Indicator {
 //    ci50.setLineColor(Color.BLUE);
 //    ci50.setupRenderer();
 
-    
+
     ChartIndicator adosc = new ChartIndicator(indGroup, IndicatorType.ADOSC, PtsChart.plotTypes.Indicator3Plot);
     //ad.setPeriod(50);
     adosc.setupRangeAxis("ADOSC");

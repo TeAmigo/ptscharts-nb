@@ -1,5 +1,8 @@
 package ptscharts;
 
+import ptsutils.PtsSymbolInfo;
+import ptsutils.PtsOHLCV;
+import ptsutils.PtsDBops;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -232,7 +235,6 @@ public class PtsChart extends JFreeChart {
     //indicatorResultsAggregate = new IndicatorResultsAggregator(instrument);
     setupChart();
     mapPlots();
-
   }
 
   public XYPlot getPlot(PtsChart.plotTypes type) {
@@ -260,10 +262,10 @@ public class PtsChart extends JFreeChart {
   }
 
   private CandlestickRenderer getCandlestickRenderer() {
-    CandlestickRenderer r = new CandlestickRenderer(5);
+    CandlestickRenderer r = new CandlestickRenderer(2);
     r.setBaseToolTipGenerator(new HighLowItemLabelGenerator());
     r.setSeriesPaint(0, Color.BLACK);
-    r.setSeriesStroke(0, new BasicStroke(2.0f));
+    r.setSeriesStroke(0, new BasicStroke(1.0f));
     return r;
   }
 
@@ -291,6 +293,13 @@ public class PtsChart extends JFreeChart {
   public int jump() {
     jumpBars(jumpBarSize);
     return jumpBarSize;
+  }
+
+  public void resetEndDate() {
+    endDate = ohlcv.PriceBars.getPeriod(ohlcv.getLastItemCount() - 1).getStart();
+    int ic = ohlcv.PriceBars.getItemCount() - 1;
+    Date ed2 = ohlcv.PriceBars.getPeriod(ic).getEnd();
+    ohlcv.PriceBars.remove(ohlcv.PriceBars.getPeriod(ic));
   }
 
   public void jumpBars(int bars) {
